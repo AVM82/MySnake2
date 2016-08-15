@@ -91,7 +91,7 @@ public class BoardTest {
                 board.getBarriers().toString());
 
         assertEquals(
-                "Board:\n" +
+                "Field:\n" +
                 "☼☼☼☼\n" +
                 "☼☺▲☼\n" +
                 "☼☻╙☼\n" +

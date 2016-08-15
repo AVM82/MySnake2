@@ -23,12 +23,14 @@ package com.codenjoy.dojo.snake.client;
  */
 
 
-
-import com.codenjoy.dojo.client.Direction;
 import com.codenjoy.dojo.client.Solver;
 import com.codenjoy.dojo.client.WebSocketRunner;
 import com.codenjoy.dojo.services.Dice;
 import com.codenjoy.dojo.services.RandomDice;
+import com.codenjoy.dojo.snake.Astar.Cell;
+import com.codenjoy.dojo.snake.Astar.Field;
+import com.codenjoy.dojo.snake.Astar.Way;
+import com.codenjoy.dojo.snake.model.Elements;
 
 /**
  * User: AVM
@@ -49,7 +51,45 @@ public class YourSolver implements Solver<Board> {
         this.board = board;
         System.out.println(board.toString());
 
-        return Direction.UP.toString();
+        Cell start = new Cell(board.getHead().getX(), board.getHead().getY());
+
+        Cell finish = new Cell(board.getApples().get(0).getX(), board.getApples().get(0).getY());
+
+        int [][] workField = new int[board.size()][board.size()];
+
+        for (int x = 0; x < board.size() ; x++) {
+            for (int y = 0; y < board.size(); y++){
+                if (board.isAt(x,y,Elements.NONE)){
+                    workField[x][y] = 0;
+                }else {
+                    workField[x][y] = -1;
+                    }
+                }
+            }
+            workField[board.getHead().getX()][board.getHead().getY()] = 1;
+            workField[board.getApples().get(0).getX()][board.getApples().get(0).getY()] = 2;
+
+
+        String go;
+
+        boolean findPath = false;
+        boolean findTail = false;
+
+        go = new Way(new Field(workField)).getNextStep(start,finish,false);
+        if (!go.equals("noRout")){findPath = true;}
+        if (findPath){
+            Field newField = moveSnakeToGoal();
+            String go2 = new Way(newField).getNextStep(newField.getStart(), newField.getFinish(), false);
+            if (!go2.equals("noRout")){findTail = true;}
+        }
+        if (findPath == false || findTail == false) {
+
+            return goWithNoRout();
+        }
+
+
+
+        return go;
     }
 
     public static void main(String[] args) {
