@@ -23,14 +23,21 @@ package com.codenjoy.dojo.snake.client;
  */
 
 
+import com.codenjoy.dojo.client.Direction;
 import com.codenjoy.dojo.client.Solver;
 import com.codenjoy.dojo.client.WebSocketRunner;
 import com.codenjoy.dojo.services.Dice;
+import com.codenjoy.dojo.services.Point;
+import com.codenjoy.dojo.services.PointImpl;
 import com.codenjoy.dojo.services.RandomDice;
 import com.codenjoy.dojo.snake.Astar.Cell;
 import com.codenjoy.dojo.snake.Astar.Field;
-import com.codenjoy.dojo.snake.Astar.Way;
+import com.codenjoy.dojo.snake.Astar.World;
 import com.codenjoy.dojo.snake.model.Elements;
+import com.sun.org.apache.xerces.internal.dom.ElementImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: AVM
@@ -68,28 +75,192 @@ public class YourSolver implements Solver<Board> {
             }
             workField[board.getHead().getX()][board.getHead().getY()] = 1;
             workField[board.getApples().get(0).getX()][board.getApples().get(0).getY()] = 2;
+        Snake snake = createSnake(board);
 
 
         String go;
 
         boolean findPath = false;
         boolean findTail = false;
-
-        go = new Way(new Field(workField)).getNextStep(start,finish,false);
+        World world = new World(new Field(workField));
+        go = world.getDirection(start,finish,false);
         if (!go.equals("noRout")){findPath = true;}
         if (findPath){
-            Field newField = moveSnakeToGoal();
-            String go2 = new Way(newField).getNextStep(newField.getStart(), newField.getFinish(), false);
+            Field newField = new futureWorld(world.getWorkField(),snake).moveSnakeToGoal(world.getRouteList());
+            //TODO  start -> head; finish -> tail
+            String go2 = new World(newField).getDirection(newField.getStart(), newField.getFinish(), false);
             if (!go2.equals("noRout")){findTail = true;}
+            board.getSnake();
         }
         if (findPath == false || findTail == false) {
 
-            return goWithNoRout();
+            return null;//goWithNoRout();// TODO: 16.08.2016
         }
 
 
 
         return go;
+    }
+
+    private Snake createSnake(Board board) {
+        ArrayList <Point> snake = new ArrayList<Point>();
+        Point point = board.getHead();
+
+        snake.add(new PointImpl(point));
+
+        int shiftY = 0;
+        int shiftX = 0;
+
+        Direction direction = board.getSnakeDirection();
+
+        //Get shift
+        if (direction.equals(Direction.DOWN)) {
+            shiftY = -1;
+            shiftX = 0;
+        }
+        if (direction.equals(Direction.UP)) {
+            shiftY = 1;
+            shiftX = 0;
+        }
+        if (direction.equals(Direction.LEFT)) {
+            shiftX = 1;
+            shiftY = 0;
+        }
+        if (direction.equals(Direction.RIGHT)) {
+            shiftX = -1;
+            shiftY = 0;
+        }
+        //-------------------------
+
+
+        point.move(point.getX() + shiftX, point.getY() + shiftY);
+        snake.add(new PointImpl(point));
+
+
+        boolean tail = board.isAt(point.getX(),point.getY(),Elements.TAIL_END_DOWN,
+                                                            Elements.TAIL_END_LEFT,
+                                                            Elements.TAIL_END_UP,
+                                                            Elements.TAIL_END_RIGHT);
+
+
+        while (!tail) {
+
+            Elements elements = board.getAt(point.getX(), point.getY());
+            direction = getNextPoint(direction, elements, point);
+            tail = board.isAt(point.getX(),point.getY(),Elements.TAIL_END_DOWN,
+                                                                Elements.TAIL_END_LEFT,
+                                                                Elements.TAIL_END_UP,
+                                                                Elements.TAIL_END_RIGHT);
+            snake.add(new PointImpl(point));
+        }
+
+
+        return new Snake(snake);
+
+
+    }
+
+    private Direction getNextPoint(Direction direction, Elements elements, Point point) {
+        int shiftY = 0;
+        int shiftX = 0;
+
+        if (elements.equals(Elements.TAIL_LEFT_DOWN)) {
+            if(direction.equals(Direction.LEFT))
+            {
+                shiftX = 0;
+                shiftY = 1;
+
+
+                direction = Direction.UP;
+            }
+            if(direction.equals(Direction.DOWN))
+            {
+                shiftX = -1;
+                shiftY = 0;
+                direction = Direction.RIGHT;
+            }
+
+        }
+
+        if (elements.equals(Elements.TAIL_LEFT_UP)) {
+            if(direction.equals(Direction.LEFT))
+            {
+                shiftX = 0;
+                shiftY = -1;
+                direction = Direction.DOWN;
+            }
+            if(direction.equals(Direction.UP))
+            {
+                shiftX = -1;
+                shiftY = 0;
+                direction = Direction.RIGHT;
+            }
+
+        }
+        if (elements.equals(Elements.TAIL_RIGHT_DOWN)) {
+            if(direction.equals(Direction.RIGHT))
+            {
+                shiftX = 0;
+                shiftY = 1;
+                direction = Direction.UP;
+            }
+            if(direction.equals(Direction.DOWN))
+            {
+                shiftX = 1;
+                shiftY = 0;
+                direction = Direction.LEFT;
+            }
+
+        }
+        if (elements.equals(Elements.TAIL_RIGHT_UP)) {
+            if(direction.equals(Direction.RIGHT))
+            {
+                shiftX = 0;
+                shiftY = -1;
+                direction = Direction.DOWN;
+            }
+            if(direction.equals(Direction.UP))
+            {
+                shiftX = 1;
+                shiftY = 0;
+                direction = Direction.RIGHT;
+            }
+
+        }
+
+        if (elements.equals(Elements.TAIL_HORIZONTAL)) {
+            if(direction.equals(Direction.RIGHT))
+            {
+                shiftX = -1;
+                shiftY = 0;
+
+            }
+            if(direction.equals(Direction.LEFT))
+            {
+                shiftX = 1;
+                shiftY = 0;
+
+            }
+
+        }
+
+        if (elements.equals(Elements.TAIL_VERTICAL)) {
+            if(direction.equals(Direction.UP))
+            {
+                shiftX = 0;
+                shiftY = 1;
+
+            }
+            if(direction.equals(Direction.DOWN))
+            {
+                shiftX = 0;
+                shiftY = -1;
+
+            }
+
+        }
+        point.move(point.getX() + shiftX, point.getY() + shiftY);
+        return direction;
     }
 
     public static void main(String[] args) {

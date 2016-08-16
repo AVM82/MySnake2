@@ -113,7 +113,7 @@ public class Board extends AbstractBoard<Elements> {
             "Apple at: %s\n" +
             "Stones at: %s\n" +
             "Head at: %s\n" +
-            "Snake at: %s\n" +
+            "futureWorld at: %s\n" +
             "Current direction: %s",
                 boardAsString(),
                 getApples(),

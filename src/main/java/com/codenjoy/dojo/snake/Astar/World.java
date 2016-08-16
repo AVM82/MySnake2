@@ -1,5 +1,6 @@
 package com.codenjoy.dojo.snake.Astar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -7,20 +8,31 @@ import java.util.PriorityQueue;
 /**
  * Created by AVM on 04.08.2016.
  */
-public class Way {
+public class World {
 
     Cell start;
     Cell finish;
     private Field workField;
     private LinkedList <Cell> openList = new LinkedList<>();
     private LinkedList <Cell> closeList = new LinkedList<>();
+    private ArrayList<Cell> routeList = new ArrayList<>();
 
-    public Way(Field workField) {
+    public World(Field workField) {
         super();
         this.workField = workField;
     }
 
-    public String getNextStep(Cell start, Cell finish, boolean longWay){
+    public ArrayList<Cell> getRouteList() {
+        if (routeList.isEmpty()){
+            return null;
+        }
+        else {
+
+            return routeList;
+        }
+    }
+
+    private  ArrayList<Cell> calculatePath(Cell start, Cell finish, boolean longWay){
         this.start = start;
         this.finish = finish;
         openList.push(start);
@@ -79,6 +91,7 @@ public class Way {
                         finish.setParent(c.getParent());
                     }
 
+
                 }
                 found = true;
 
@@ -94,41 +107,47 @@ public class Way {
         if (!noRoute) {
             Cell way = finish.getParent();
             nextStep = finish;
+            routeList.add(nextStep);
             while (!way.equals(start)) {
                 nextStep = way;
+                routeList.add(nextStep);
                 way = way.getParent();
 
 //                    if (nextStep == null) break;
             }
         }
-        if (noRoute) {
-            return "noRoute";
-        }else {
-            return getDirection(start, nextStep);
-        }
 
+        return routeList;
     }
 
-    private String getDirection(Cell start, Cell nextStep) {
-            if (nextStep.getX() < start.getX()){
+    public String getDirection(Cell start, Cell finish, boolean longWay) {
+//        Cell start, Cell nextStep
+        ArrayList<Cell> path = calculatePath(start, finish, longWay);
+        if (!path.isEmpty()) {
+            Cell nextStep = path.get(path.size()-1);
+            if (nextStep.getX() < start.getX()) {
                 return "LEFT";
-            }else{
-                if (nextStep.getX() > start.getX()){
+            } else {
+                if (nextStep.getX() > start.getX()) {
                     return "RIGHT";
-                }else{
-                    if (nextStep.getY() < start.getY()){
+                } else {
+                    if (nextStep.getY() < start.getY()) {
                         return "UP";
-                    }else{
-                        if(nextStep.getY() > start.getY()){
+                    } else {
+                        if (nextStep.getY() > start.getY()) {
                             return "DOWN";
                         }
                     }
                 }
             }
-        return "STOP";
+        }
+        return "noRoute";
     }
 
 
+    public Field getWorkField() {
+        return workField;
+    }
 }
 
 

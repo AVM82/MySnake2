@@ -14,6 +14,9 @@ public class Field {
     public int getAt(int x, int y) {
         return field[x][y];
     }
+    public void setAt(int x, int y, int value) {
+        field[x][y] = value;
+    }
 
     public Cell getStart() {
         for (int i = 0; i < field.length; i++) {
