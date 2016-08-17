@@ -1,5 +1,6 @@
 package com.codenjoy.dojo.snake.client;
 
+import com.codenjoy.dojo.services.Point;
 import com.codenjoy.dojo.services.PointImpl;
 import com.codenjoy.dojo.snake.Astar.Cell;
 import com.codenjoy.dojo.snake.Astar.Field;
@@ -27,7 +28,8 @@ public class futureWorld implements MoveSnake {
         while(!path.isEmpty()) {
             int index = path.size()-1;
             moveHead(field, path.get(index));
-            moveTail(field, path.get(index));
+            moveTail(field);
+            path.remove(index);
 
 
         }
@@ -37,14 +39,19 @@ public class futureWorld implements MoveSnake {
         return field;
     }
 
-    private void moveTail(Field field, Cell cell) {
-
-
+    private void moveTail(Field field) {
+        Point tail = snake.getTail();
+        field.setAt(tail.getX(), tail.getY(),0);
+        snake.setTail();
+        tail = snake.getTail();
+        field.setAt(tail.getX(), tail.getY(),2);
 
     }
 
     private void moveHead(Field field, Cell cell) {
-        field.setAt(cell.getX(), cell.getY(), -1);
+        Point headNow = snake.getHead();
+        field.setAt(headNow.getX(), headNow.getY(), -1);
+        field.setAt(cell.getX(), cell.getY(), 1);
         snake.setHead(new PointImpl(cell.getX(), cell.getY()));
     }
 

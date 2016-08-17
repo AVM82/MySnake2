@@ -26,4 +26,18 @@ public class Snake {
     public void setHead(PointImpl point) {
         snake.add(0,point);
     }
+
+    public  void setTail() {
+        snake.remove(snake.size()-1);
+    }
+
+    public Point getTail() {
+
+        return new PointImpl(snake.get(snake.size()-1));
+    }
+
+    public Point getHead() {
+
+        return new PointImpl(snake.get(0));
+    }
 }

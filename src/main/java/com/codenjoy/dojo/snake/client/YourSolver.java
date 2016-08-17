@@ -87,10 +87,9 @@ public class YourSolver implements Solver<Board> {
         if (!go.equals("noRout")){findPath = true;}
         if (findPath){
             Field newField = new futureWorld(world.getWorkField(),snake).moveSnakeToGoal(world.getRouteList());
-            //TODO  start -> head; finish -> tail
             String go2 = new World(newField).getDirection(newField.getStart(), newField.getFinish(), false);
+
             if (!go2.equals("noRout")){findTail = true;}
-            board.getSnake();
         }
         if (findPath == false || findTail == false) {
 

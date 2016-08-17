@@ -1,5 +1,7 @@
 package com.codenjoy.dojo.snake.Astar;
 
+import java.util.Arrays;
+
 /**
  * Created by AVM on 04.08.2016.
  */
@@ -37,5 +39,17 @@ public class Field {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+        for (int i = 0; i < field.length; i++) {
+            s += "Field{" +
+                    "field=" + Arrays.toString(field[i]) +
+                    "}\n";
+        }
+        return s;
+
     }
 }

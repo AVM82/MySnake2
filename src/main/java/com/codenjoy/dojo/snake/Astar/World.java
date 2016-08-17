@@ -106,11 +106,12 @@ public class World {
         }
         if (!noRoute) {
             Cell way = finish.getParent();
-            nextStep = finish;
-            routeList.add(nextStep);
+//            nextStep = finish;
+            routeList.add(finish);
+//            routeList.add(way);
             while (!way.equals(start)) {
-                nextStep = way;
-                routeList.add(nextStep);
+//                nextStep = way;
+                routeList.add(way);
                 way = way.getParent();
 
 //                    if (nextStep == null) break;
