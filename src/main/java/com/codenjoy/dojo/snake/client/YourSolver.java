@@ -35,8 +35,10 @@ import com.codenjoy.dojo.snake.Astar.Field;
 import com.codenjoy.dojo.snake.Astar.World;
 import com.codenjoy.dojo.snake.model.Elements;
 import com.sun.org.apache.xerces.internal.dom.ElementImpl;
+import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -84,16 +86,16 @@ public class YourSolver implements Solver<Board> {
         boolean findTail = false;
         World world = new World(new Field(workField));
         go = world.getDirection(start,finish,false);
-        if (!go.equals("noRout")){findPath = true;}
+        if (!go.equals("noRoute")){findPath = true;}
         if (findPath){
             Field newField = new futureWorld(world.getWorkField(),snake).moveSnakeToGoal(world.getRouteList());
             String go2 = new World(newField).getDirection(newField.getStart(), newField.getFinish(), false);
 
-            if (!go2.equals("noRout")){findTail = true;}
+            if (!go2.equals("noRoute")){findTail = true;}
         }
         if (findPath == false || findTail == false) {
 
-            return null;//goWithNoRout();// TODO: 16.08.2016
+            return getGoWithNoRout(world, snake);
         }
 
 
@@ -101,8 +103,22 @@ public class YourSolver implements Solver<Board> {
         return go;
     }
 
+    private String getGoWithNoRout(World world, Snake snake) {
+
+
+        Cell head = new Cell(board.getHead().getX(), board.getHead().getY());
+        LinkedList <Cell> neighbors = head.getNeighbors();
+        for (int i = 0; i < neighbors.size(); i++) {
+            //TODO
+
+        }
+
+
+        return null;
+    }
+
     private Snake createSnake(Board board) {
-        ArrayList <Point> snake = new ArrayList<Point>();
+        ArrayList <Point> snake = new ArrayList<>();
         Point point = board.getHead();
 
         snake.add(new PointImpl(point));
@@ -222,7 +238,7 @@ public class YourSolver implements Solver<Board> {
             {
                 shiftX = 1;
                 shiftY = 0;
-                direction = Direction.RIGHT;
+                direction = Direction.LEFT;
             }
 
         }
