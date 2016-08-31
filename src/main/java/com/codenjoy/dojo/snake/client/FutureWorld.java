@@ -11,12 +11,12 @@ import java.util.LinkedList;
 /**
  * Created by AVM on 16.08.2016.
  */
-public class futureWorld implements MoveSnake {
+public class FutureWorld implements MoveSnake {
 
     Field field;
     Snake snake;
 
-    public futureWorld(Field field, Snake snake) {
+    public FutureWorld(Field field, Snake snake) {
         this.field = field;
         this.snake = snake;
     }
@@ -27,8 +27,8 @@ public class futureWorld implements MoveSnake {
 
         while(!path.isEmpty()) {
             int index = path.size()-1;
-            moveHead(field, path.get(index));
-            moveTail(field);
+            moveHead(this.field, path.get(index));
+            moveTail(this.field);
             path.remove(index);
 
 

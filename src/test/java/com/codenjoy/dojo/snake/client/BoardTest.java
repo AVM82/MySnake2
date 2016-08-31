@@ -100,7 +100,7 @@ public class BoardTest {
                 "Apple at: [[1,1]]\n" +
                 "Stones at: [[1,2]]\n" +
                 "Head at: [2,1]\n" +
-                "futureWorld at: [[2,1], [2,2]]\n" +
+                "FutureWorld at: [[2,1], [2,2]]\n" +
                 "Current direction: UP",
                 board.toString());
     }

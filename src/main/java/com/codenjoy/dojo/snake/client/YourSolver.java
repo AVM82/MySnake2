@@ -34,12 +34,9 @@ import com.codenjoy.dojo.snake.Astar.Cell;
 import com.codenjoy.dojo.snake.Astar.Field;
 import com.codenjoy.dojo.snake.Astar.World;
 import com.codenjoy.dojo.snake.model.Elements;
-import com.sun.org.apache.xerces.internal.dom.ElementImpl;
-import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * User: AVM
@@ -64,20 +61,12 @@ public class YourSolver implements Solver<Board> {
 
         Cell finish = new Cell(board.getApples().get(0).getX(), board.getApples().get(0).getY());
 
-        int [][] workField = new int[board.size()][board.size()];
+        Cell apple = new Cell(board.getApples().get(0).getX(),board.getApples().get(0).getY());
 
-        for (int x = 0; x < board.size() ; x++) {
-            for (int y = 0; y < board.size(); y++){
-                if (board.isAt(x,y,Elements.NONE)){
-                    workField[x][y] = 0;
-                }else {
-                    workField[x][y] = -1;
-                    }
-                }
-            }
-            workField[board.getHead().getX()][board.getHead().getY()] = 1;
-            workField[board.getApples().get(0).getX()][board.getApples().get(0).getY()] = 2;
-        Snake snake = createSnake(board);
+        Cell head = new Cell(board.getHead().getX(), board.getHead().getY());
+
+        int[][] workField = getWorkField(board, apple, head);
+//            Snake snake = createSnake(board);
 
 
         String go;
@@ -88,14 +77,17 @@ public class YourSolver implements Solver<Board> {
         go = world.getDirection(start,finish,false);
         if (!go.equals("noRoute")){findPath = true;}
         if (findPath){
-            Field newField = new futureWorld(world.getWorkField(),snake).moveSnakeToGoal(world.getRouteList());
+            int [][] newWorkField = getWorkField(board, apple, head);
+
+            FutureWorld futureWorld = new FutureWorld(new Field(newWorkField), createSnake(board));
+            Field newField = futureWorld.moveSnakeToGoal(world.getRouteList());
             String go2 = new World(newField).getDirection(newField.getStart(), newField.getFinish(), false);
 
             if (!go2.equals("noRoute")){findTail = true;}
         }
         if (findPath == false || findTail == false) {
 
-            return getGoWithNoRout(world, snake);
+            return getGoWithNoRout(world, createSnake(board), apple);
         }
 
 
@@ -103,18 +95,53 @@ public class YourSolver implements Solver<Board> {
         return go;
     }
 
-    private String getGoWithNoRout(World world, Snake snake) {
+    private int[][] getWorkField(Board board, Cell apple, Cell head) {
+        int [][] workField = new int[board.size()][board.size()];
+
+        for (int x = 0; x < board.size() ; x++) {
+            for (int y = 0; y < board.size(); y++){
+                if (board.isAt(x,y, Elements.NONE)){
+                    workField[x][y] = 0;
+                }else {
+                    workField[x][y] = -1;
+                    }
+                }
+            }
+        workField[head.getX()][head.getY()] = 1;
+        workField[apple.getX()][apple.getY()] = 2;
+        return workField;
+    }
+
+    private String getGoWithNoRout(World world, Snake snake, Cell apple) {
 
 
-        Cell head = new Cell(board.getHead().getX(), board.getHead().getY());
-        LinkedList <Cell> neighbors = head.getNeighbors();
-        for (int i = 0; i < neighbors.size(); i++) {
-            //TODO
+//        LinkedList <Cell> neighbors = head.getNeighbors();
+//        for (int i = 0; i < neighbors.size(); i++) {
+//
+//
+//        }
 
-        }
+        Cell start = new Cell(snake.getHead().getX(),snake.getHead().getY());
+        Cell finish = new Cell(snake.getTail().getX(),snake.getTail().getY());
 
+        Field field = world.getWorkField();
+        field.setAt(apple.getX(), apple.getY(), -1);
 
-        return null;
+        field.setAt(finish.getX(), finish.getY(), 2);
+        field.setAt(start.getX(), start.getY(), 1);
+        String go = new World(field).getDirection(start, finish, true);
+
+//        if (go.equals("noRoute")) {
+//
+//            LinkedList <Cell> neighbors = start.getNeighbors();
+//            for (int i = 0; i < neighbors.size(); i++) {
+//
+//
+//            }
+//
+//        }
+
+        return go;
     }
 
     private Snake createSnake(Board board) {

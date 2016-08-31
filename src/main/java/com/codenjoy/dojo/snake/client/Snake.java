@@ -2,7 +2,6 @@ package com.codenjoy.dojo.snake.client;
 
 import com.codenjoy.dojo.services.Point;
 import com.codenjoy.dojo.services.PointImpl;
-import com.codenjoy.dojo.snake.Astar.Cell;
 
 import java.util.ArrayList;
 
