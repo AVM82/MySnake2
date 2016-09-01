@@ -37,6 +37,7 @@ import com.codenjoy.dojo.snake.model.Elements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 /**
  * User: AVM
@@ -66,7 +67,6 @@ public class YourSolver implements Solver<Board> {
         Cell head = new Cell(board.getHead().getX(), board.getHead().getY());
 
         int[][] workField = getWorkField(board, apple, head);
-//            Snake snake = createSnake(board);
 
 
         String go;
@@ -87,7 +87,7 @@ public class YourSolver implements Solver<Board> {
         }
         if (findPath == false || findTail == false) {
 
-            return getGoWithNoRout(world, createSnake(board), apple);
+            return getGoWithNoRout(world, createSnake(board), apple, head);
         }
 
 
@@ -112,14 +112,38 @@ public class YourSolver implements Solver<Board> {
         return workField;
     }
 
-    private String getGoWithNoRout(World world, Snake snake, Cell apple) {
+    private String getGoWithNoRout(World world, Snake snake, Cell apple, Cell head) {
+        String go = "noRoute";
+        String go2;
+        double maxDistance = 0;
+
+        LinkedList<Cell> neighbors = head.getNeighbors();
+        for (Cell neighbor : neighbors) {
 
 
-//        LinkedList <Cell> neighbors = head.getNeighbors();
-//        for (int i = 0; i < neighbors.size(); i++) {
-//
-//
-//        }
+            if (world.getWorkField().getAt(neighbor.getX(),neighbor.getY()) != -1){
+
+                int [][] newWorkField = getWorkField(board, neighbor, head);
+                World world2 = new World(new Field(newWorkField));
+                go2 = world2.getDirection(head,neighbor,false);
+
+
+
+                FutureWorld futureWorld = new FutureWorld(new Field(newWorkField), createSnake(board));
+                Field newField = futureWorld.moveSnakeToGoal(world2.getRouteList());
+                String go3 = new World(newField).getDirection(newField.getStart(), newField.getFinish(), false);
+                if (!go3.equals("noRoute")){
+                    double newMaxDistance = (Math.pow(apple.getX() - neighbor.getX(), 2) + Math.pow(apple.getY() - neighbor.getY(), 2));
+                    if (newMaxDistance > maxDistance){
+                        maxDistance = newMaxDistance;
+                        go = go2;
+                    }
+                }
+            }
+        }
+        if (!go.equals("noRoute")) {
+            return go;
+        }
 
         Cell start = new Cell(snake.getHead().getX(),snake.getHead().getY());
         Cell finish = new Cell(snake.getTail().getX(),snake.getTail().getY());
@@ -129,17 +153,7 @@ public class YourSolver implements Solver<Board> {
 
         field.setAt(finish.getX(), finish.getY(), 2);
         field.setAt(start.getX(), start.getY(), 1);
-        String go = new World(field).getDirection(start, finish, true);
-
-//        if (go.equals("noRoute")) {
-//
-//            LinkedList <Cell> neighbors = start.getNeighbors();
-//            for (int i = 0; i < neighbors.size(); i++) {
-//
-//
-//            }
-//
-//        }
+        go = new World(field).getDirection(start, finish, false);
 
         return go;
     }

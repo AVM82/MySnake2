@@ -27,8 +27,12 @@ public class FutureWorld implements MoveSnake {
 
         while(!path.isEmpty()) {
             int index = path.size()-1;
-            moveHead(this.field, path.get(index));
-            moveTail(this.field);
+            moveHead(field, path.get(index));
+            if (index > 0) {
+                moveTail(field);
+            }
+
+            field.setAt(snake.getTail().getX(), snake.getTail().getY(),2);
             path.remove(index);
 
 
@@ -43,8 +47,6 @@ public class FutureWorld implements MoveSnake {
         Point tail = snake.getTail();
         field.setAt(tail.getX(), tail.getY(),0);
         snake.setTail();
-        tail = snake.getTail();
-        field.setAt(tail.getX(), tail.getY(),2);
 
     }
 
