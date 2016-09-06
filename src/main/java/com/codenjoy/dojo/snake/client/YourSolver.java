@@ -75,7 +75,13 @@ public class YourSolver implements Solver<Board> {
         boolean findTail = false;
         World world = new World(new Field(workField));
         go = world.getDirection(start,finish,false);
+
+//        if(board.getSnake().size() > 150) {
+//            go = "noRoute";
+//        }
+
         if (!go.equals("noRoute")){findPath = true;}
+
         if (findPath){
             int [][] newWorkField = getWorkField(board, apple, head);
 
