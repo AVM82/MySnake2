@@ -106,15 +106,10 @@ public class World {
         }
         if (!noRoute) {
             Cell way = finish.getParent();
-//            nextStep = finish;
             routeList.add(finish);
-//            routeList.add(way);
             while (!way.equals(start)) {
-//                nextStep = way;
                 routeList.add(way);
                 way = way.getParent();
-
-//                    if (nextStep == null) break;
             }
         }
 
@@ -122,7 +117,6 @@ public class World {
     }
 
     public String getDirection(Cell start, Cell finish, boolean longWay) {
-//        Cell start, Cell nextStep
         ArrayList<Cell> path = calculatePath(start, finish, longWay);
         if (!path.isEmpty()) {
             Cell nextStep = path.get(path.size()-1);

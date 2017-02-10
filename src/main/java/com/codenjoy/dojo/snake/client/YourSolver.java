@@ -36,7 +36,6 @@ import com.codenjoy.dojo.snake.Astar.World;
 import com.codenjoy.dojo.snake.model.Elements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -44,7 +43,7 @@ import java.util.LinkedList;
  */
 public class YourSolver implements Solver<Board> {
 
-    private static final String USER_NAME = "1982AlexVM@gmail.com";
+    private static final String USER_NAME = "rabilint@gmail.com";//"1982AlexVM@gmail.com";
 
     private Dice dice;
     private Board board;
@@ -60,13 +59,27 @@ public class YourSolver implements Solver<Board> {
 
         Cell start = new Cell(board.getHead().getX(), board.getHead().getY());
 
-        Cell finish = new Cell(board.getApples().get(0).getX(), board.getApples().get(0).getY());
+        Cell finish;
+        Cell apple;
+//        apple = new Cell(board.getApples().get(0).getX(),board.getApples().get(0).getY());
+//        finish = new Cell(board.getApples().get(0).getX(), board.getApples().get(0).getY());
+        int oneSideFields = board.size() - 2;
+        int freeCell = oneSideFields * oneSideFields - 2 - board.getSnake().size();
+        if ( freeCell > 4 ){
 
-        Cell apple = new Cell(board.getApples().get(0).getX(),board.getApples().get(0).getY());
+            apple = new Cell(board.getApples().get(0).getX(),board.getApples().get(0).getY());
+            finish = new Cell(board.getApples().get(0).getX(), board.getApples().get(0).getY());
+        }else{
+
+            apple = new Cell(board.getStones().get(0).getX(),board.getStones().get(0).getY());
+            finish = new Cell(board.getStones().get(0).getX(), board.getStones().get(0).getY());
+        }
+
 
         Cell head = new Cell(board.getHead().getX(), board.getHead().getY());
 
         int[][] workField = getWorkField(board, apple, head);
+
 
 
         String go;
@@ -76,9 +89,7 @@ public class YourSolver implements Solver<Board> {
         World world = new World(new Field(workField));
         go = world.getDirection(start,finish,false);
 
-//        if(board.getSnake().size() > 150) {
-//            go = "noRoute";
-//        }
+
 
         if (!go.equals("noRoute")){findPath = true;}
 
@@ -94,6 +105,7 @@ public class YourSolver implements Solver<Board> {
         if (findPath == false || findTail == false) {
 
             return getGoWithNoRout(world, createSnake(board), apple, head);
+
         }
 
 
@@ -114,7 +126,7 @@ public class YourSolver implements Solver<Board> {
                 }
             }
         workField[head.getX()][head.getY()] = 1;
-        workField[apple.getX()][apple.getY()] = 2;
+            workField[apple.getX()][apple.getY()] = 2;
         return workField;
     }
 
@@ -130,6 +142,10 @@ public class YourSolver implements Solver<Board> {
             if (world.getWorkField().getAt(neighbor.getX(),neighbor.getY()) != -1){
 
                 int [][] newWorkField = getWorkField(board, neighbor, head);
+                /*need to test*/
+                newWorkField[board.getStones().get(0).getX()][board.getStones().get(0).getY()] = 0;
+                newWorkField[board.getApples().get(0).getX()][board.getApples().get(0).getY()] = 0;
+                /*---------------------*/
                 World world2 = new World(new Field(newWorkField));
                 go2 = world2.getDirection(head,neighbor,false);
 
